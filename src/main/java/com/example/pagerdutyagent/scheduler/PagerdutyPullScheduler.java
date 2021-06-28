@@ -16,7 +16,8 @@ import org.springframework.stereotype.Component;
 
 import com.example.pagerdutyagent.model.IncidentRespVO;
 import com.example.pagerdutyagent.model.LogEntryRespVO;
-import com.example.pagerdutyagent.service.PagerdutyService;
+import com.example.pagerdutyagent.service.IncidentdutyService;
+import com.example.pagerdutyagent.service.LogEntryService;
 
 @Configuration
 @EnableScheduling
@@ -26,7 +27,10 @@ public class PagerdutyPullScheduler {
 	private final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	@Autowired
-	private PagerdutyService incidentService;
+	private IncidentdutyService incidentService;
+	
+	@Autowired
+	private LogEntryService logEntityService;
 
 	private final int PULL_NEW_INCIDENT_INTERVAL = 1;
 
@@ -59,7 +63,7 @@ public class PagerdutyPullScheduler {
 		LocalDateTime lUntil = lJustNow.plusMinutes(PULL_NEW_INCIDENT_INTERVAL).truncatedTo(ChronoUnit.MINUTES)
 				.minusNanos(1);
 
-		List<LogEntryRespVO> lLogEntryRespVOList = incidentService.pullNewLogEntities(lSince, lUntil);
+		List<LogEntryRespVO> lLogEntryRespVOList = logEntityService.pullNewLogEntities(lSince, lUntil);
 
 		lLogEntryRespVOList.forEach(l -> {
 			switch (l.getType()) {
